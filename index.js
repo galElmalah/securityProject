@@ -16,7 +16,6 @@ const addRandomString = (txt) => {
     })
 }
 execute('./yoel.out')
-// console.log(Buffer.from(originalFileContent.toString()));
 let flag = false;
 while (!flag) {
     let tmpFile = originalFileContent;
