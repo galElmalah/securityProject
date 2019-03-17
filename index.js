@@ -17,20 +17,28 @@ const addRandomString = (txt) => {
 }
 execute('./yoel.out')
 // console.log(Buffer.from(originalFileContent.toString()));
-fs.writeFileSync('./yoel.test.out', originalFileContent, 'binary');
-execute('./yoel.test.out')
-// while (true) {
-//     let tmpFile = originalFileContent.toString();
-//     while (true) {
-//         try {
-//             tmpFile = addRandomString(tmpFile)
-//             fs.writeFileSync('./yoel.test.out', tmpFile);
-//             execute('./yoel.test.out')
-//             execute('objdump -d ./yoel.test.out');
-//         } catch (err) {
-//             console.log(`Cant decompile \n ${err}`);
-//             break;
-//         }
-//     }
-// }
+let flag = false;
+while (!flag) {
+    let tmpFile = originalFileContent;
+    while (true) {
+        try {
+            tmpFile = addRandomString(tmpFile)
+            fs.writeFileSync('./yoel.test.out', tmpFile, 'binary');
+            execute('objdump -d ./yoel.test.out');
+        } catch (err) {
+            console.log(`Cant decompile \n ${err}`);
+            try {
+                execute('./yoel.test.out');
+                flag = true;
+                console.log("Golden");
+
+                break;
+            } catch (err) {
+                console.log("$$$$$$$$$$$$$$$$");
+            }
+
+            break;
+        }
+    }
+}
 
