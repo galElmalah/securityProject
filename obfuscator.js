@@ -1,6 +1,6 @@
-const { execSync } = require('child_process');
+// const { execSync } = require('child_process');
 const fs = require('fs');
-const execute = (cmd) => execSync(cmd, { stdio: 'inherit' });
+// const execute = (cmd) => execSync(cmd, { stdio: 'inherit' });
 const getRandom = (max) => Math.floor(Math.random() * max);
 const addRandomString = (txt) => {
     const random = getRandom(txt.length);
@@ -13,13 +13,21 @@ const addRandomString = (txt) => {
 }
 
 module.exports = {
+
     obfuscate(filename, ending) {
+        const { execSync } = require('child_process');
+        const execute = (cmd) => execSync(cmd, { stdio: 'inherit' });
+
         try {
-            if (ending != -1){
+
+            if (ending != -1) {
+                execute('chmod 777 ' + filename + '.' + ending)
                 originalFileContent = fs.readFileSync(filename + '.' + ending, 'binary');
             }
-            else
+            else {
+                execute('chmod 777 ' + filename)
                 originalFileContent = fs.readFileSync(filename, 'binary');
+            }
 
         } catch (err) {
             console.log("file name is not exist");
@@ -32,6 +40,8 @@ module.exports = {
                 try {
                     tmpFile = addRandomString(tmpFile)
                     fs.writeFileSync('./' + filename + '.test.out', tmpFile, 'binary');
+                    execute('chmod 777 ./' + filename + '.test.out');
+
                     execute('objdump -d ./' + filename + '.test.out');
                 } catch (err) {
                     console.log(`Cant decompile \n ${err}`);
