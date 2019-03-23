@@ -6,8 +6,8 @@ program
     .option('-T, --no-tests', 'ignore test hook')
 
 program
-    .command('setup')
-    .description('run remote setup commands')
+    .command('obfuscate <filename>')
+    .description('Choose file to ocfuscate')
     .action(function () {
         console.log('setup');
     });

@@ -1,12 +1,7 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
-
-// execute commands in the terminal
 const execute = (cmd) => execSync(cmd, { stdio: 'inherit' });
-const originalFileContent = fs.readFileSync("yoel.out", 'binary');
-console.log(originalFileContent.toString().length);
 const getRandom = (max) => Math.floor(Math.random() * max);
-
 const addRandomString = (txt) => {
     const random = getRandom(txt.length);
     return txt.split('').reduce((accm, char, i) => {
@@ -16,29 +11,44 @@ const addRandomString = (txt) => {
         return accm + char;
     })
 }
-execute('./yoel.out')
-let flag = false;
-while (!flag) {
-    let tmpFile = originalFileContent;
-    while (true) {
+
+module.exports = class Obfuscator {
+    obfuscate(filename) {
         try {
-            tmpFile = addRandomString(tmpFile)
-            fs.writeFileSync('./yoel.test.out', tmpFile, 'binary');
-            execute('objdump -d ./yoel.test.out');
+            originalFileContent = fs.readFileSync(filename, 'binary');
         } catch (err) {
-            console.log(`Cant decompile \n ${err}`);
-            try {
-                execute('./yoel.test.out');
-                flag = true;
-                console.log("Golden");
-
-                break;
-            } catch (err) {
-                console.log("$$$$$$$$$$$$$$$$");
-            }
-
-            break;
+            console.log("file name is not exist");
+            process.exit(1)
         }
+        let flag = false;
+        while (!flag) {
+            let tmpFile = originalFileContent;
+            while (true) {
+                try {
+                    tmpFile = addRandomString(tmpFile)
+                    fs.writeFileSync('./' + filename + '.test.out', tmpFile, 'binary');
+                    execute('objdump -d ./' + filename + '.test.out');
+                } catch (err) {
+                    console.log(`Cant decompile \n ${err}`);
+                    try {
+                        execute('./' + filename + '.test.out');
+                        flag = true;
+                        console.log("Golden");
+
+                        break;
+                    } catch (err) {
+                        console.log("$$$$$$$$$$$$$$$$");
+                    }
+
+                    break;
+                }
+            }
+        }
+
     }
+
 }
+
+
+
 
