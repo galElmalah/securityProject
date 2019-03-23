@@ -1,43 +1,41 @@
-const { execSync } = require('child_process');
-const fs = require('fs');
-// execute commands in the terminal
-const execute = (cmd) => execSync(cmd, { stdio: 'inherit' });
-const originalFileContent = fs.readFileSync("yoel.out", 'binary');
-console.log(originalFileContent.toString().length);
-const getRandom = (max) => Math.floor(Math.random() * max);
+const program = require("commander");
+program
+    .version('0.0.1')
+    .option('-C, --chdir <path>', 'change the working directory')
+    .option('-c, --config <path>', 'set config path. defaults to ./deploy.conf')
+    .option('-T, --no-tests', 'ignore test hook')
 
-const addRandomString = (txt) => {
-    const random = getRandom(txt.length);
-    return txt.split('').reduce((accm, char, i) => {
-        if (i === random) {
-            return accm + ' ';
+program
+    .command('setup')
+    .description('run remote setup commands')
+    .action(function () {
+        console.log('setup');
+    });
+
+program
+    .command('exec <cmd>')
+    .description('run the given remote command')
+    .action(function (cmd) {
+        console.log('exec "%s"', cmd);
+    });
+
+program
+    .command('teardown <dir> [otherDirs...]')
+    .description('run teardown commands')
+    .action(function (dir, otherDirs) {
+        console.log('dir "%s"', dir);
+        if (otherDirs) {
+            otherDirs.forEach(function (oDir) {
+                console.log('dir "%s"', oDir);
+            });
         }
-        return accm + char;
-    })
-}
-execute('./yoel.out')
-let flag = false;
-while (!flag) {
-    let tmpFile = originalFileContent;
-    while (true) {
-        try {
-            tmpFile = addRandomString(tmpFile)
-            fs.writeFileSync('./yoel.test.out', tmpFile, 'binary');
-            execute('objdump -d ./yoel.test.out');
-        } catch (err) {
-            console.log(`Cant decompile \n ${err}`);
-            try {
-                execute('./yoel.test.out');
-                flag = true;
-                console.log("Golden");
+    });
 
-                break;
-            } catch (err) {
-                console.log("$$$$$$$$$$$$$$$$");
-            }
+program
+    .command('*')
+    .description('deploy the given env')
+    .action(function (env) {
+        console.log('deploying "%s"', env);
+    });
 
-            break;
-        }
-    }
-}
-
+program.parse(process.argv);
