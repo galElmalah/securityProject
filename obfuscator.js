@@ -12,10 +12,15 @@ const addRandomString = (txt) => {
     })
 }
 
-module.exports = class Obfuscator {
-    obfuscate(filename) {
+module.exports = {
+    obfuscate(filename, ending) {
         try {
-            originalFileContent = fs.readFileSync(filename, 'binary');
+            if (ending != -1){
+                originalFileContent = fs.readFileSync(filename + '.' + ending, 'binary');
+            }
+            else
+                originalFileContent = fs.readFileSync(filename, 'binary');
+
         } catch (err) {
             console.log("file name is not exist");
             process.exit(1)

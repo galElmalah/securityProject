@@ -1,41 +1,16 @@
 const program = require("commander");
-program
-    .version('0.0.1')
-    .option('-C, --chdir <path>', 'change the working directory')
-    .option('-c, --config <path>', 'set config path. defaults to ./deploy.conf')
-    .option('-T, --no-tests', 'ignore test hook')
+const Obfuscator = require("./obfuscator");
 
 program
     .command('obfuscate <filename>')
     .description('Choose file to ocfuscate')
-    .action(function () {
-        console.log('setup');
-    });
+    .action(function (file) {
+        var fileName = file.substring(0, file.lastIndexOf('.'));
+        var fileEnding = file.substring(file.lastIndexOf('.') + 1, file.length);
+        console.log(fileName, fileEnding);
 
-program
-    .command('exec <cmd>')
-    .description('run the given remote command')
-    .action(function (cmd) {
-        console.log('exec "%s"', cmd);
-    });
+        Obfuscator.obfuscate(fileName, fileEnding);
+    })
 
-program
-    .command('teardown <dir> [otherDirs...]')
-    .description('run teardown commands')
-    .action(function (dir, otherDirs) {
-        console.log('dir "%s"', dir);
-        if (otherDirs) {
-            otherDirs.forEach(function (oDir) {
-                console.log('dir "%s"', oDir);
-            });
-        }
-    });
-
-program
-    .command('*')
-    .description('deploy the given env')
-    .action(function (env) {
-        console.log('deploying "%s"', env);
-    });
 
 program.parse(process.argv);
