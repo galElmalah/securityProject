@@ -9,7 +9,7 @@ program
         var fileEnding = file.substring(file.lastIndexOf('.') + 1, file.length);
         console.log(fileName, fileEnding);
 
-        Obfuscator.obfuscate(fileName, fileEnding);
+        Obfuscator.execution(fileName, fileEnding);
     })
 
 
