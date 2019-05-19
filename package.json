@@ -11,7 +11,9 @@
   "license": "ISC",
   "dependencies": {
     "brain.js": "^1.6.1",
+    "cli-progress": "^2.1.1",
     "commander": "^2.20.0",
-    "ml-regression-multivariate-linear": "^2.0.0"
+    "ml-regression-multivariate-linear": "^2.0.0",
+    "regression": "^2.0.1"
   }
 }

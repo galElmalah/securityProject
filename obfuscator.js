@@ -14,6 +14,8 @@ const addRandomString = txt => {
   });
 };
 
+
+
 const obfuscate = filename => {
   //obfuscation function
   let flag = false;
