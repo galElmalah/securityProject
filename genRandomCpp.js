@@ -30,7 +30,6 @@ const genFiles = () => {
 };
 
 getDataSet().forEach(file => {
-  console.log('compiling ' + file);
   execSync(
     `gcc ./dataSets/${file} -o ./dataSets/${file.replace('cpp', 'out')}`
   );

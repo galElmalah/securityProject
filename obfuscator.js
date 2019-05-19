@@ -1,5 +1,8 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
+const predictor = require('./ml');
+const _cliProgress = require('cli-progress');
+
 let originalFileContent;
 const execute = cmd => execSync(cmd);
 const getRandom = max => Math.floor(Math.random() * max);
@@ -14,10 +17,14 @@ const addRandomString = txt => {
   });
 };
 
+const percentage = base => progress => (progress / base) * 100;
 
-
+const bar1 = new _cliProgress.Bar({}, _cliProgress.Presets.shades_classic);
+bar1.start(100, 0);
 const obfuscate = filename => {
-  //obfuscation function
+  const { size } = fs.statSync(`./${filename}.out`);
+  const [input, output] = predictor.predict(size);
+  const progressPercentage = percentage(output);
   let flag = false;
   let iter = 0;
   while (!flag) {
@@ -26,18 +33,17 @@ const obfuscate = filename => {
       try {
         tmpFile = addRandomString(tmpFile);
         iter++;
+
+        progressPercentage(iter) < 95 && bar1.update(progressPercentage(iter));
         fs.writeFileSync('./' + filename + '.test.out', tmpFile, 'binary');
         execute('chmod 777 ./' + filename + '.test.out');
         execute('objdump -d ./' + filename + '.test.out');
       } catch (err) {
-        console.log(`Cant decompile \n ${err}`);
         try {
           execute('./' + filename + '.test.out');
-          console.log('Yayyy');
+          bar1.update(100);
           return iter;
-        } catch (err) {
-          console.log("Can't compile.");
-        }
+        } catch (err) {}
 
         break;
       }
@@ -59,7 +65,6 @@ module.exports = {
         originalFileContent = fs.readFileSync(filename, 'binary');
       }
     } catch (err) {
-      console.log('file name is not exist');
       process.exit(1);
     }
     return obfuscate(filename);
